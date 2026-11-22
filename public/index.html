@@ -3,405 +3,434 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8fa">
   <title>ShopLedger — Billing, Inventory &amp; Khata ERP</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-inner">
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Main navigation">
       <div class="brand">
-        <div class="brand-logo">SL</div>
-        <div>
-          <div class="brand-title">
-            ShopLedger <span class="version-pill">v0.8.4</span>
-          </div>
-          <div class="brand-sub" id="shop-subtitle">Corner Shop Kirana &amp; Wholesale &middot; Sadashiv Peth, Pune</div>
+        <span class="brand-logo" aria-hidden="true">SL</span>
+        <span class="brand-copy">
+          <span class="brand-title">ShopLedger</span>
+          <span class="brand-caption">Retail workspace</span>
+        </span>
+      </div>
+
+      <div class="nav-section-label">WORKSPACE</div>
+      <nav class="tabs-bar sidebar-nav" id="tabs" aria-label="Workspace sections">
+        <a href="#new" id="tab-new" class="tab-link active" aria-current="page">
+          <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h16v13H4zM8 5.5V3h8v2.5M8 10h8M8 14h5"/></svg>
+          <span>New order</span>
+          <span class="nav-shortcut">POS</span>
+        </a>
+        <a href="#orders" id="tab-orders" class="tab-link">
+          <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg>
+          <span>Order history</span>
+          <span class="tab-badge" id="badge-orders">0</span>
+        </a>
+        <a href="#khata" id="tab-khata" class="tab-link">
+          <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h14v15H5zM9 4.5v15M12 9h4M12 13h4"/></svg>
+          <span>Customer Khata</span>
+        </a>
+        <a href="#audit" id="tab-audit" class="tab-link">
+          <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5h16M6 16V9h3v7M11 16V5h3v11M16 16v-4h3v4"/></svg>
+          <span>Inventory &amp; GST</span>
+          <span class="tab-badge warn" id="badge-audit">!</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span class="store-avatar" aria-hidden="true">CS</span>
+        <span class="store-copy">
+          <span class="store-label">CURRENT STORE</span>
+          <strong>Corner Shop</strong>
+          <span class="store-location">Sadashiv Peth, Pune</span>
+        </span>
+        <span class="store-menu" aria-hidden="true">···</span>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div class="topbar-context">
+          <span class="context-label">STORE</span>
+          <span class="context-name" id="shop-subtitle">Corner Shop Kirana &amp; Wholesale &middot; Sadashiv Peth, Pune</span>
         </div>
-      </div>
-      <div class="topbar-meta">
-        <span class="meta-chip" id="shop-gstin">GSTIN: 27AAAAA0000A1Z5</span>
-        <button class="alert-chip" id="recon-alert-btn" title="View Accountant Invoice Reconciliation">
-          <span class="dot"></span>
-          <span id="recon-alert-text">Checking GST Reconciliation...</span>
-        </button>
-      </div>
+        <div class="topbar-meta">
+          <span class="meta-chip" id="shop-gstin">GSTIN: 27AAAAA0000A1Z5</span>
+          <button class="alert-chip" id="recon-alert-btn" type="button" title="View accountant invoice reconciliation">
+            <span class="alert-dot" aria-hidden="true"></span>
+            <span id="recon-alert-text">Checking GST reconciliation...</span>
+            <span class="alert-arrow" aria-hidden="true">↗</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="container">
+        <section class="page-intro" aria-labelledby="page-title">
+          <div>
+            <div class="eyebrow">SHOPLEDGER <span>/</span> OPERATIONS</div>
+            <h1 id="page-title">New order</h1>
+            <p id="page-description">Build a customer bill and review its total before placing the order.</p>
+          </div>
+          <span class="version-pill">v0.8.4</span>
+        </section>
+
+        <section class="kpi-grid" id="kpi-strip" aria-label="Store summary">
+          <article class="kpi-card">
+            <div class="kpi-label">Gross revenue</div>
+            <div class="kpi-value" id="kpi-revenue">₹0.00</div>
+            <div class="kpi-foot" id="kpi-tax">GST Collected: ₹0.00 · Discounts: ₹0.00</div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-label">Orders</div>
+            <div class="kpi-value" id="kpi-orders">0</div>
+            <div class="kpi-foot" id="kpi-orders-sub">0 active · 0 pending · 0 cancelled</div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-label">Khata due</div>
+            <div class="kpi-value" id="kpi-khata">₹0.00</div>
+            <div class="kpi-foot">Outstanding across customer accounts</div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-label">Inventory</div>
+            <div class="kpi-value" id="kpi-stock">0 SKUs</div>
+            <div class="kpi-foot" id="kpi-stock-sub">0 out of stock · 0 low stock</div>
+          </article>
+        </section>
+
+        <section id="view-new" class="tab-view">
+          <div class="pos-layout">
+            <section class="panel catalog-panel" aria-labelledby="catalog-title">
+              <div class="panel-header catalog-header">
+                <div>
+                  <div class="section-kicker">SALES</div>
+                  <h2 class="panel-title" id="catalog-title">Product catalog</h2>
+                  <p class="panel-desc">Choose products and set quantities to build the order.</p>
+                </div>
+                <label class="search-box" for="pos-search">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.5 15.5 4 4"/></svg>
+                  <input type="search" id="pos-search" placeholder="Search products" autocomplete="off">
+                  <span class="search-hint">SKU · HSN</span>
+                </label>
+              </div>
+
+              <div class="category-pills" id="pos-categories" role="group" aria-label="Filter products by category">
+                <button type="button" class="cat-pill active" data-cat="all" aria-pressed="true">All items</button>
+                <button type="button" class="cat-pill" data-cat="Staples & Grains" aria-pressed="false">Staples &amp; Grains</button>
+                <button type="button" class="cat-pill" data-cat="Oils & Spices" aria-pressed="false">Oils &amp; Spices</button>
+                <button type="button" class="cat-pill" data-cat="Dairy & Ghee" aria-pressed="false">Dairy &amp; Ghee</button>
+                <button type="button" class="cat-pill" data-cat="Beverages & Packaged" aria-pressed="false">Beverages &amp; Packaged</button>
+              </div>
+
+              <div class="table-wrap">
+                <table id="products" class="data-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Product</th>
+                      <th scope="col">Tax code</th>
+                      <th scope="col" class="r">Price</th>
+                      <th scope="col" class="r">Availability</th>
+                      <th scope="col" class="c" style="width:130px">Quantity</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </section>
+
+            <aside class="panel pos-drawer" aria-labelledby="bill-title">
+              <div class="panel-header bill-header">
+                <div>
+                  <div class="section-kicker">CURRENT ORDER</div>
+                  <h2 class="panel-title" id="bill-title">Order summary</h2>
+                </div>
+                <button type="button" class="btn btn-ghost btn-sm" id="clear-cart">Clear order</button>
+              </div>
+
+              <div class="drawer-body">
+                <div class="form-group">
+                  <label for="customer-select">Customer account</label>
+                  <select id="customer-select">
+                    <option value="">Walk-in / custom name</option>
+                  </select>
+                </div>
+
+                <div class="form-group" id="walkin-name-group">
+                  <label for="customer">Customer name <span class="optional-label">OPTIONAL</span></label>
+                  <input id="customer" type="text" placeholder="Enter customer name">
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="payment-mode">Payment</label>
+                    <select id="payment-mode">
+                      <option value="cash">Cash counter</option>
+                      <option value="upi">UPI / QR scan</option>
+                      <option value="khata">Khata credit</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="order-status">Order status</label>
+                    <select id="order-status">
+                      <option value="completed">Completed</option>
+                      <option value="pending">Pending dispatch</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group coupon-group">
+                  <label for="coupon">Discount code <span class="optional-label">OPTIONAL</span></label>
+                  <input id="coupon" type="text" placeholder="Enter a promo code" autocomplete="off">
+                  <div class="promo-chips" id="promo-chips" aria-label="Available promo codes">
+                    <button type="button" class="promo-chip" data-code="SAVE10" title="10% off above ₹500 (max ₹150)">SAVE10</button>
+                    <button type="button" class="promo-chip" data-code="FLAT50" title="Flat ₹50 off above ₹300">FLAT50</button>
+                    <button type="button" class="promo-chip" data-code="WELCOME" title="5% off welcome promo">WELCOME</button>
+                    <button type="button" class="promo-chip" data-code="WHOLESALE15" title="15% off above ₹2000 (max ₹400)">WHOLESALE15</button>
+                  </div>
+                  <div id="coupon-feedback" class="field-hint" aria-live="polite"></div>
+                </div>
+
+                <div class="cart-preview-box">
+                  <div class="cart-preview-heading">
+                    <span class="cart-preview-title">Items in this order</span>
+                    <span id="cart-count" class="item-count">0</span>
+                  </div>
+                  <div id="cart-items-list" class="cart-items-empty">Add products from the catalog to get started.</div>
+
+                  <div class="cart-totals">
+                    <div class="cart-row">
+                      <span>Subtotal</span>
+                      <span id="preview-subtotal">₹0.00</span>
+                    </div>
+                    <div class="cart-row discount-row">
+                      <span>Discount</span>
+                      <span id="preview-discount">-₹0.00</span>
+                    </div>
+                    <div class="cart-row">
+                      <span>GST</span>
+                      <span id="preview-tax">₹0.00</span>
+                    </div>
+                    <div class="cart-row grand-row">
+                      <span>Amount due</span>
+                      <strong id="preview-total">₹0.00</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <button id="place" type="button" class="btn btn-primary btn-block">
+                  Place order <span aria-hidden="true">→</span>
+                </button>
+                <p class="submit-note">Stock is updated when the order is placed.</p>
+                <div id="msg" aria-live="polite"></div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="view-orders" class="tab-view" style="display:none">
+          <section class="panel" aria-labelledby="orders-title">
+            <div class="panel-header">
+              <div>
+                <div class="section-kicker">SALES</div>
+                <h2 class="panel-title" id="orders-title">Order history</h2>
+                <p class="panel-desc">Search orders, review their status, and open a printable invoice.</p>
+              </div>
+            </div>
+
+            <div class="filter-bar" role="search" aria-label="Filter orders">
+              <div class="filter-item filter-search">
+                <label for="orders-search">Search orders</label>
+                <input type="search" id="orders-search" placeholder="Order number, customer, or coupon">
+              </div>
+              <div class="filter-item">
+                <label for="orders-status">Status</label>
+                <select id="orders-status">
+                  <option value="all">All statuses</option>
+                  <option value="completed">Completed</option>
+                  <option value="pending">Pending</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label for="orders-from">From date</label>
+                <input type="date" id="orders-from">
+              </div>
+              <div class="filter-item">
+                <label for="orders-to">To date</label>
+                <input type="date" id="orders-to">
+              </div>
+              <div class="filter-actions">
+                <button type="button" class="btn btn-primary" id="btn-filter-orders">Apply filters</button>
+                <button type="button" class="btn btn-ghost" id="btn-reset-orders">Reset</button>
+              </div>
+            </div>
+            <div id="orders-action-msg" aria-live="polite"></div>
+
+            <div class="table-wrap">
+              <table id="orders" class="data-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Order</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Items</th>
+                    <th scope="col">Payment</th>
+                    <th scope="col">Coupon</th>
+                    <th scope="col" class="r">Subtotal</th>
+                    <th scope="col" class="r">Discount</th>
+                    <th scope="col" class="r">GST</th>
+                    <th scope="col" class="r">Total</th>
+                    <th scope="col">Status</th>
+                    <th scope="col" class="r">Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section id="view-khata" class="tab-view" style="display:none">
+          <div class="khata-layout">
+            <section class="panel" aria-labelledby="khata-title">
+              <div class="panel-header">
+                <div>
+                  <div class="section-kicker">CUSTOMER ACCOUNTS</div>
+                  <h2 class="panel-title" id="khata-title">Customer Khata</h2>
+                  <p class="panel-desc">Review credit limits, billed amounts, payments, and balances.</p>
+                </div>
+              </div>
+              <div id="khata-msg" aria-live="polite"></div>
+              <div class="table-wrap">
+                <table id="customers-table" class="data-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Account</th>
+                      <th scope="col">Type / GSTIN</th>
+                      <th scope="col" class="r">Credit limit</th>
+                      <th scope="col" class="r">Opening balance</th>
+                      <th scope="col" class="r">Total billed</th>
+                      <th scope="col" class="r">Total settled</th>
+                      <th scope="col" class="r">Balance due</th>
+                      <th scope="col" class="r">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </section>
+
+            <aside class="panel settlement-panel" aria-labelledby="settlement-title">
+              <div class="panel-header">
+                <div>
+                  <div class="section-kicker">PAYMENT RECEIVED</div>
+                  <h2 class="panel-title" id="settlement-title">Record settlement</h2>
+                  <p class="panel-desc">Log a payment against a customer account.</p>
+                </div>
+              </div>
+              <div class="drawer-body">
+                <div class="form-group">
+                  <label for="settle-customer">Customer account</label>
+                  <select id="settle-customer"></select>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="settle-amount">Amount received (₹)</label>
+                    <input type="number" id="settle-amount" min="1" step="0.01" placeholder="e.g. 500">
+                  </div>
+                  <div class="form-group">
+                    <label for="settle-mode">Payment channel</label>
+                    <select id="settle-mode">
+                      <option value="upi">UPI / GPay</option>
+                      <option value="cash">Cash</option>
+                      <option value="neft">NEFT / bank transfer</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="settle-note">Reference or note <span class="optional-label">OPTIONAL</span></label>
+                  <input type="text" id="settle-note" placeholder="Add a payment reference">
+                </div>
+                <button type="button" class="btn btn-primary btn-block" id="btn-record-settlement">Record payment</button>
+
+                <div class="settlements-section">
+                  <h3 class="sub-heading">Recent settlements</h3>
+                  <div id="settlements-list" class="settlements-feed"></div>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="view-audit" class="tab-view" style="display:none">
+          <section class="panel audit-panel">
+            <div class="panel-header">
+              <div>
+                <div class="section-kicker">ACCOUNTING</div>
+                <h2 class="panel-title">Invoice reconciliation</h2>
+                <p class="panel-desc">Compare stored order totals with the printable invoice figures.</p>
+              </div>
+              <div id="recon-summary-pill" class="status-pill cancelled">Checking...</div>
+            </div>
+            <div class="table-wrap">
+              <table id="recon-table" class="data-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Order</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Promo</th>
+                    <th scope="col" class="r">Subtotal</th>
+                    <th scope="col" class="r">Ledger discount</th>
+                    <th scope="col" class="r">Ledger GST</th>
+                    <th scope="col" class="r">Ledger total</th>
+                    <th scope="col" class="r">Invoice discount</th>
+                    <th scope="col" class="r">Invoice GST</th>
+                    <th scope="col" class="r">Invoice total</th>
+                    <th scope="col" class="r">Variance</th>
+                    <th scope="col">Result</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel inventory-panel">
+            <div class="panel-header">
+              <div>
+                <div class="section-kicker">WAREHOUSE</div>
+                <h2 class="panel-title">Inventory health</h2>
+                <p class="panel-desc">Physical stock, reserved units, and quantities available to sell.</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table id="inventory-audit-table" class="data-table">
+                <thead>
+                  <tr>
+                    <th scope="col">SKU</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">HSN</th>
+                    <th scope="col" class="r">GST</th>
+                    <th scope="col" class="r">Price</th>
+                    <th scope="col" class="r">Physical stock</th>
+                    <th scope="col" class="r">Reserved</th>
+                    <th scope="col" class="r">Sellable</th>
+                    <th scope="col">Stock status</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+      </main>
     </div>
-  </header>
-
-  <main class="container">
-    <!-- KPI Summary Row -->
-    <section class="kpi-grid" id="kpi-strip">
-      <div class="kpi-card">
-        <div class="kpi-label">Gross Order Revenue</div>
-        <div class="kpi-value" id="kpi-revenue">₹0.00</div>
-        <div class="kpi-foot" id="kpi-tax">GST Collected: ₹0.00 &middot; Discounts: ₹0.00</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Orders Desk</div>
-        <div class="kpi-value" id="kpi-orders">0</div>
-        <div class="kpi-foot" id="kpi-orders-sub">0 active &middot; 0 pending &middot; 0 cancelled</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Khata Receivables (Credit Due)</div>
-        <div class="kpi-value" id="kpi-khata">₹0.00</div>
-        <div class="kpi-foot">Across registered retail &amp; wholesale accounts</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Stock &amp; Invoice Audit</div>
-        <div class="kpi-value" id="kpi-stock">0 SKUs</div>
-        <div class="kpi-foot" id="kpi-stock-sub">0 out of stock &middot; 0 low stock</div>
-      </div>
-    </section>
-
-    <!-- Navigation Tabs -->
-    <nav class="tabs-bar" id="tabs">
-      <a href="#new" id="tab-new" class="tab-link active">
-        New Order (POS)
-      </a>
-      <a href="#orders" id="tab-orders" class="tab-link">
-        Order History <span class="tab-badge" id="badge-orders">0</span>
-      </a>
-      <a href="#khata" id="tab-khata" class="tab-link">
-        Customer Khata (Credit)
-      </a>
-      <a href="#audit" id="tab-audit" class="tab-link">
-        Inventory &amp; GST Audit <span class="tab-badge warn" id="badge-audit">!</span>
-      </a>
-    </nav>
-
-    <!-- TAB 1: NEW ORDER (POS) -->
-    <section id="view-new" class="tab-view">
-      <div class="pos-layout">
-        <!-- Left: Product Catalog -->
-        <div class="panel">
-          <div class="panel-header">
-            <div>
-              <h2 class="panel-title">Product Catalog &amp; Stock</h2>
-              <p class="panel-desc">Select quantities to add items to the current bill. GST is calculated per HSN slab.</p>
-            </div>
-            <div class="search-box">
-              <input type="text" id="pos-search" placeholder="Search item, SKU, or HSN...">
-            </div>
-          </div>
-
-          <div class="category-pills" id="pos-categories">
-            <button type="button" class="cat-pill active" data-cat="all">All Items</button>
-            <button type="button" class="cat-pill" data-cat="Staples & Grains">Staples &amp; Grains</button>
-            <button type="button" class="cat-pill" data-cat="Oils & Spices">Oils &amp; Spices</button>
-            <button type="button" class="cat-pill" data-cat="Dairy & Ghee">Dairy &amp; Ghee</button>
-            <button type="button" class="cat-pill" data-cat="Beverages & Packaged">Beverages &amp; Packaged</button>
-          </div>
-
-          <div class="table-wrap">
-            <table id="products" class="data-table">
-              <thead>
-                <tr>
-                  <th>SKU / Product</th>
-                  <th>HSN &amp; GST</th>
-                  <th class="r">Rate</th>
-                  <th class="r">Sellable Stock</th>
-                  <th class="c" style="width:120px">Order Qty</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Right: Billing Drawer -->
-        <aside class="panel pos-drawer">
-          <div class="panel-header">
-            <div>
-              <h2 class="panel-title">Current Bill Desk</h2>
-              <p class="panel-desc">Configure customer, promo code, and payment mode</p>
-            </div>
-            <button type="button" class="btn btn-ghost btn-sm" id="clear-cart">Clear</button>
-          </div>
-
-          <div class="drawer-body">
-            <div class="form-group">
-              <label for="customer-select">Customer Account (Khata Directory)</label>
-              <select id="customer-select">
-                <option value="">-- Walk-in / Custom Name --</option>
-              </select>
-            </div>
-
-            <div class="form-group" id="walkin-name-group">
-              <label for="customer">Customer Name</label>
-              <input id="customer" type="text" placeholder="Walk-in Customer">
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label for="payment-mode">Payment Mode</label>
-                <select id="payment-mode">
-                  <option value="cash">Cash Counter</option>
-                  <option value="upi">UPI / QR Scan</option>
-                  <option value="khata">Khata (Customer Credit)</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="order-status">Fulfillment Status</label>
-                <select id="order-status">
-                  <option value="completed">Completed (Immediate)</option>
-                  <option value="pending">Pending Dispatch</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="coupon">Promo / Coupon Code</label>
-              <div class="coupon-input-row">
-                <input id="coupon" type="text" placeholder="e.g. SAVE10, FLAT50">
-              </div>
-              <div class="promo-chips" id="promo-chips">
-                <span class="promo-chip" data-code="SAVE10" title="10% off above ₹500 (max ₹150)">SAVE10</span>
-                <span class="promo-chip" data-code="FLAT50" title="Flat ₹50 off above ₹300">FLAT50</span>
-                <span class="promo-chip" data-code="WELCOME" title="5% off welcome promo">WELCOME</span>
-                <span class="promo-chip" data-code="WHOLESALE15" title="15% off above ₹2000 (max ₹400)">WHOLESALE15</span>
-              </div>
-              <div id="coupon-feedback" class="field-hint"></div>
-            </div>
-
-            <div class="cart-preview-box">
-              <div class="cart-preview-title">Selected Line Items (<span id="cart-count">0</span>)</div>
-              <div id="cart-items-list" class="cart-items-empty">No items selected yet. Adjust quantities in the catalog table.</div>
-
-              <div class="cart-totals">
-                <div class="cart-row">
-                  <span>Gross Subtotal</span>
-                  <span id="preview-subtotal">₹0.00</span>
-                </div>
-                <div class="cart-row discount-row">
-                  <span>Coupon Discount</span>
-                  <span id="preview-discount">-₹0.00</span>
-                </div>
-                <div class="cart-row">
-                  <span>GST (CGST + SGST)</span>
-                  <span id="preview-tax">₹0.00</span>
-                </div>
-                <div class="cart-row grand-row">
-                  <span>Net Payable Total</span>
-                  <span id="preview-total">₹0.00</span>
-                </div>
-              </div>
-            </div>
-
-            <button id="place" type="button" class="btn btn-primary btn-block">
-              Place Order &amp; Commit Stock
-            </button>
-
-            <div id="msg"></div>
-          </div>
-        </aside>
-      </div>
-    </section>
-
-    <!-- TAB 2: ORDER HISTORY -->
-    <section id="view-orders" class="tab-view" style="display:none">
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <h2 class="panel-title">Order History &amp; Dispatch Register</h2>
-            <p class="panel-desc">Sorted newest first. Click "Invoice" to open the accountant's printable GST tax invoice.</p>
-          </div>
-        </div>
-
-        <div class="filter-bar">
-          <div class="filter-item">
-            <label for="orders-search">Search</label>
-            <input type="text" id="orders-search" placeholder="Order #, customer, coupon...">
-          </div>
-          <div class="filter-item">
-            <label for="orders-status">Status</label>
-            <select id="orders-status">
-              <option value="all">All Statuses</option>
-              <option value="completed">Completed</option>
-              <option value="pending">Pending</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-          </div>
-          <div class="filter-item">
-            <label for="orders-from">From Date</label>
-            <input type="date" id="orders-from">
-          </div>
-          <div class="filter-item">
-            <label for="orders-to">To Date</label>
-            <input type="date" id="orders-to">
-          </div>
-          <div class="filter-actions">
-            <button type="button" class="btn btn-secondary" id="btn-filter-orders">Apply Filter</button>
-            <button type="button" class="btn btn-ghost" id="btn-reset-orders">Reset</button>
-          </div>
-        </div>
-
-        <div id="orders-action-msg"></div>
-
-        <div class="table-wrap">
-          <table id="orders" class="data-table">
-            <thead>
-              <tr>
-                <th>Order #</th>
-                <th>Date</th>
-                <th>Customer</th>
-                <th>Items</th>
-                <th>Mode</th>
-                <th>Coupon</th>
-                <th class="r">Subtotal</th>
-                <th class="r">Discount</th>
-                <th class="r">GST</th>
-                <th class="r">Ledger Total</th>
-                <th>Status</th>
-                <th class="r">Actions</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 3: CUSTOMER KHATA -->
-    <section id="view-khata" class="tab-view" style="display:none">
-      <div class="khata-layout">
-        <div class="panel">
-          <div class="panel-header">
-            <div>
-              <h2 class="panel-title">Customer Khata (Credit Accounts)</h2>
-              <p class="panel-desc">Track wholesale and retail credit limits, cumulative billing, and payment settlements.</p>
-            </div>
-          </div>
-
-          <div id="khata-msg"></div>
-
-          <div class="table-wrap">
-            <table id="customers-table" class="data-table">
-              <thead>
-                <tr>
-                  <th>Account</th>
-                  <th>Type / GSTIN</th>
-                  <th class="r">Credit Limit</th>
-                  <th class="r">Opening Bal</th>
-                  <th class="r">Total Billed</th>
-                  <th class="r">Total Settled</th>
-                  <th class="r">Balance Due</th>
-                  <th class="r">Action</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-
-        <aside class="panel">
-          <div class="panel-header">
-            <div>
-              <h2 class="panel-title">Record Khata Settlement</h2>
-              <p class="panel-desc">Log a customer payment received via Cash, UPI, or NEFT</p>
-            </div>
-          </div>
-
-          <div class="drawer-body">
-            <div class="form-group">
-              <label for="settle-customer">Customer Account</label>
-              <select id="settle-customer"></select>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label for="settle-amount">Amount Received (₹)</label>
-                <input type="number" id="settle-amount" min="1" step="0.01" placeholder="e.g. 500">
-              </div>
-              <div class="form-group">
-                <label for="settle-mode">Payment Channel</label>
-                <select id="settle-mode">
-                  <option value="upi">UPI / GPay</option>
-                  <option value="cash">Cash</option>
-                  <option value="neft">NEFT / Bank Transfer</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="settle-note">Reference / Note</label>
-              <input type="text" id="settle-note" placeholder="e.g. Part payment against Feb bills">
-            </div>
-            <button type="button" class="btn btn-primary btn-block" id="btn-record-settlement">
-              Record Payment Settlement
-            </button>
-
-            <hr class="divider">
-
-            <h3 class="sub-heading">Recent Settlement Receipts</h3>
-            <div id="settlements-list" class="settlements-feed"></div>
-          </div>
-        </aside>
-      </div>
-    </section>
-
-    <!-- TAB 4: INVENTORY & GST AUDIT -->
-    <section id="view-audit" class="tab-view" style="display:none">
-      <div class="panel" style="margin-bottom: 20px;">
-        <div class="panel-header">
-          <div>
-            <h2 class="panel-title">Accountant Invoice vs. Order Ledger Reconciliation</h2>
-            <p class="panel-desc">Compares stored Order Ledger totals (<code>lib/pricing.js</code>) against the Accountant Tax Invoice renderer (<code>lib/invoice.js</code>).</p>
-          </div>
-          <div id="recon-summary-pill" class="status-pill cancelled">Checking...</div>
-        </div>
-
-        <div class="table-wrap">
-          <table id="recon-table" class="data-table">
-            <thead>
-              <tr>
-                <th>Order #</th>
-                <th>Date</th>
-                <th>Customer</th>
-                <th>Promo</th>
-                <th class="r">Subtotal</th>
-                <th class="r">Ledger Disc</th>
-                <th class="r">Ledger GST</th>
-                <th class="r">Ledger Total</th>
-                <th class="r">Invoice Disc</th>
-                <th class="r">Invoice GST</th>
-                <th class="r">Invoice Total</th>
-                <th class="r">Variance (Δ)</th>
-                <th>Audit Status</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <h2 class="panel-title">Warehouse Stock &amp; Wholesale Reservation Matrix</h2>
-            <p class="panel-desc">Physical stock on shelves versus units held in wholesale reservations and net sellable units.</p>
-          </div>
-        </div>
-
-        <div class="table-wrap">
-          <table id="inventory-audit-table" class="data-table">
-            <thead>
-              <tr>
-                <th>SKU</th>
-                <th>Product Name</th>
-                <th>Category</th>
-                <th>HSN</th>
-                <th class="r">GST Slab</th>
-                <th class="r">Unit Price</th>
-                <th class="r">Physical Stock</th>
-                <th class="r">Reserved Hold</th>
-                <th class="r">Net Sellable</th>
-                <th>Stock Health</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-  </main>
+  </div>
 
   <script src="js/app.js"></script>
 </body>

@@ -428,10 +428,25 @@ function loadGstReconciliation() {
 
 function showTab(which) {
   var tabs = ['new', 'orders', 'khata', 'audit'];
+  var pageDetails = {
+    new: ['New order', 'Build a customer bill and review its total before placing the order.'],
+    orders: ['Order history', 'Search past orders, check their status, and open invoices.'],
+    khata: ['Customer Khata', 'Review customer balances and record payments received.'],
+    audit: ['Inventory & GST', 'Review stock availability and compare invoice figures with the order ledger.']
+  };
   for (var i = 0; i < tabs.length; i++) {
     var t = tabs[i];
     document.getElementById('view-' + t).style.display = (t === which) ? '' : 'none';
     document.getElementById('tab-' + t).className = (t === which) ? 'tab-link active' : 'tab-link';
+    if (t === which) {
+      document.getElementById('tab-' + t).setAttribute('aria-current', 'page');
+    } else {
+      document.getElementById('tab-' + t).removeAttribute('aria-current');
+    }
+  }
+  if (pageDetails[which]) {
+    document.getElementById('page-title').textContent = pageDetails[which][0];
+    document.getElementById('page-description').textContent = pageDetails[which][1];
   }
   if (which === 'orders') loadOrders();
   if (which === 'khata') loadCustomersDropdown();
@@ -458,8 +473,10 @@ for (var cIdx = 0; cIdx < catButtons.length; cIdx++) {
     activeCategory = this.getAttribute('data-cat');
     for (var j = 0; j < catButtons.length; j++) {
       catButtons[j].className = 'cat-pill';
+      catButtons[j].setAttribute('aria-pressed', 'false');
     }
     this.className = 'cat-pill active';
+    this.setAttribute('aria-pressed', 'true');
     renderCatalogTable();
   };
 }
